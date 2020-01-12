@@ -9,6 +9,7 @@ const START_NODE_COL = 15;
 const FINISH_NODE_ROW = 10;
 const FINISH_NODE_COL = 35;
 
+var hasVisualize = false;
 export default class PathfindingVisualizer extends Component {
   constructor() {
     super();
@@ -24,12 +25,13 @@ export default class PathfindingVisualizer extends Component {
   }
 
   handleMouseDown(row, col) {
+    if (hasVisualize) return;
     const newGrid = getNewGridWithWallToggled(this.state.grid, row, col);
     this.setState({ grid: newGrid, mouseIsPressed: true });
   }
 
   handleMouseEnter(row, col) {
-    if (!this.state.mouseIsPressed) return;
+    if (!this.state.mouseIsPressed || hasVisualize) return;
     const newGrid = getNewGridWithWallToggled(this.state.grid, row, col);
     this.setState({ grid: newGrid });
   }
@@ -65,6 +67,10 @@ export default class PathfindingVisualizer extends Component {
   }
 
   visualizeDijkstra() {
+
+    this.resetVisited();
+
+    hasVisualize = true
     const { grid } = this.state;
     const startNode = grid[START_NODE_ROW][START_NODE_COL];
     const finishNode = grid[FINISH_NODE_ROW][FINISH_NODE_COL];
@@ -74,6 +80,7 @@ export default class PathfindingVisualizer extends Component {
   }
 
   resetGrid() {
+    hasVisualize = false
     const grid = getInitialGrid();
     this.setState({ grid });
     for (let row = 0; row < 20; row++) {
@@ -89,10 +96,30 @@ export default class PathfindingVisualizer extends Component {
     }
   }
 
+  resetVisited() {
+    for (let row = 0; row < 20; row++) {
+      for (let col = 0; col < 50; col++) {
+        if (row === START_NODE_ROW && col === START_NODE_COL) {
+          document.getElementById(`node-${row}-${col}`).className = 'node node-start';
+        } else if (row === FINISH_NODE_ROW && col === FINISH_NODE_COL) {
+          document.getElementById(`node-${row}-${col}`).className = 'node node-finish';
+        } else if (document.getElementById(`node-${row}-${col}`).className != 'node node-wall') {
+          document.getElementById(`node-${row}-${col}`).className = 'node';
+        }
+      }
+    }
+  }
+
   createRandomWalls() {
     this.resetGrid();
 
   }
+
+  checkViewport = setInterval(function () {
+    document.getElementById('distance').innerHTML = "cel mai scurt drum: " + document.getElementsByClassName('node node-shortest-path').length
+
+    document.getElementById('visited').innerHTML = "noduri vizitare: " + (document.getElementsByClassName('node node-shortest-path').length + document.getElementsByClassName('node node-visited').length)
+  }, 50);
 
 
   render() {
@@ -100,15 +127,20 @@ export default class PathfindingVisualizer extends Component {
 
     return (
       <>
-        <button onClick={() => this.visualizeDijkstra()}>
+        <button class="green" onClick={() => this.visualizeDijkstra()}>
           Visualize Dijkstra's Algorithm
         </button>
-        <button onClick={() => this.resetGrid()}>
+        <button class="red" onClick={() => this.resetGrid()}>
           Reset
         </button>
-        <button onClick={() => this.createRandomWalls()}>
+
+        <span id="distance" class="gray"></span>
+
+        <span id="visited" class="blue"></span>
+        {/* <button class="gray" onClick={() => this.createRandomWalls()}>
           Create random walls
-        </button>
+        </button> */}
+        <br></br>
         <div className="grid">
           {grid.map((row, rowIdx) => {
             return (

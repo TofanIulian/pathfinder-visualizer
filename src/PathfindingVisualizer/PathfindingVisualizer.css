@@ -1,3 +1,42 @@
 .grid {
-  margin: 100px 0 0;
+  margin: 50px auto 0;
+  background: white;
+  display: inline-grid;
+}
+
+button {
+  padding: 10px;
+  font-size: 16px;
+  margin: 40px 20px 0 20px;
+  color: white;
+}
+
+.red {
+  background-color: red
+}
+
+.green {
+  background-color: green
+}
+
+.gray {
+  background-color: white;
+  color: rgb(134, 134, 6);
+  font-size: 20px;
+  margin: 0 15px; 
+}
+
+.blue {
+  background-color: white;
+  color: rgb(7, 7, 102);
+  font-size: 20px;
+}
+
+body {
+  height: 100vh;
+  background: dimgrey;
+}
+
+.grid div{
+  display: inline-block;
 }
